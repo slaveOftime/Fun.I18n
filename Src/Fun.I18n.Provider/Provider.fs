@@ -14,8 +14,8 @@ type public Provider (config : TypeProviderConfig) as this =
     let asm = System.Reflection.Assembly.GetExecutingAssembly()
     let ns = "Fun.I18n.Provider"
 
-    let staticParams = [ProvidedStaticParameter("phrasesFile",typeof<string>)]
-    let generator = ProvidedTypeDefinition(asm, ns, "Generator", Some typeof<obj>, isErased = true)
+    let staticParams = [ProvidedStaticParameter("i18nFilePathOrUrl",typeof<string>)]
+    let generator = ProvidedTypeDefinition(asm, ns, "I18nProvider", Some typeof<obj>, isErased = true)
 
     let watcherSubscriptions = System.Collections.Concurrent.ConcurrentDictionary<string, System.IDisposable>()
 
@@ -29,10 +29,11 @@ type public Provider (config : TypeProviderConfig) as this =
                     if status <> 200 then
                         return failwithf "URL %s returned %i status code" arg status
                     return
-                        match Utils.createProviderGeneratorTypeDefinition asm ns typeName res with
+                        match Generator.createProviderTypeDefinition asm ns typeName res with
                         | Some t -> t
                         | None -> failwithf "Response from URL %s is not a valid JSON: %s" arg res
                 } |> Async.RunSynchronously
+
             else
                 let content =
                     if arg.StartsWith("{") || arg.StartsWith("[") then arg
@@ -49,7 +50,7 @@ type public Provider (config : TypeProviderConfig) as this =
                             watcherSubscriptions.GetOrAdd
                                 (typeName
                                 ,fun _ ->
-                                    Utils.watchForChanges
+                                    FileWatcher.watchForChanges
                                         (filepath)
                                         (typeName + this.GetHashCode().ToString()
                                         ,fun () ->
@@ -59,7 +60,7 @@ type public Provider (config : TypeProviderConfig) as this =
 
                         System.IO.File.ReadAllText(filepath, System.Text.Encoding.UTF8)
 
-                match Utils.createProviderGeneratorTypeDefinition asm ns typeName content with
+                match Generator.createProviderTypeDefinition asm ns typeName content with
                 | Some t -> t
                 | None -> failwithf "Local sample is not a valid JSON"
 

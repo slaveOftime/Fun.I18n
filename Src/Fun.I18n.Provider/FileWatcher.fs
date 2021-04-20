@@ -1,6 +1,7 @@
 ﻿namespace Fun.I18n.Provider
 
 // File watcher implementation taken from FSharp.Data
+open System
 open System.IO
 open System.Collections.Generic
 
@@ -48,3 +49,30 @@ type private FileWatcher(path) =
                 false
         else
             false
+
+
+module FileWatcher =
+    let private watchers = Dictionary<string, FileWatcher>()
+    
+    // sets up a filesystem watcher that calls the invalidate function whenever the file changes
+    let watchForChanges path (owner, onChange) =
+        let watcher =
+            lock watchers (fun () ->
+                match watchers.TryGetValue(path) with
+                | true, watcher ->
+                    // log (sprintf "Reusing %s watcher" path)
+                    watcher.Subscribe(owner, onChange)
+                    watcher
+    
+                | false, _ ->
+                    // log (sprintf "Setting up %s watcher" path)
+                    let watcher = FileWatcher path
+                    watcher.Subscribe(owner, onChange)
+                    watchers.Add(path, watcher)
+                    watcher)
+    
+        { new IDisposable with
+            member __.Dispose() =
+                lock watchers (fun () ->
+                    if watcher.Unsubscribe(owner) then
+                        watchers.Remove(path) |> ignore) }

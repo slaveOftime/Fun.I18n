@@ -1,5 +1,5 @@
 ﻿// JsonParser by Jon Harrop: https://gist.github.com/jdh30/50741cd6d094004203b1dce019726ebb
-module JsonParser
+module Fun.I18n.Provider.JsonParser
 
 type Json =
   | Null
@@ -68,4 +68,39 @@ and (|ParseMember|_|) = function
   | Lex(LITERAL(String key), ParseJSON(value, it)) -> Some((key, value), it)
   | _ -> None
 
-let parse s = (|ParseJSON|_|) (s, 0) |> Option.map fst
+
+let tryGetObjectValue name json =
+    match json with
+    | Object kvs ->
+        kvs
+        |> List.tryPick (fun (key, v) -> 
+            match key = name, v with
+            | true, String v -> Some v
+            | _ -> None)
+    | _ ->
+        None
+
+
+let tryParse s = (|ParseJSON|_|) (s, 0) |> Option.map fst
+let parse = tryParse >> Option.get
+
+
+let parseToMap jsonString =
+    let rec foldJsonObjectToMap path (state: Map<string, string>) (keyValues: (string * Json) list) =
+        keyValues
+        |> List.fold
+            (fun state (k, v) ->
+                let prefix =
+                    match path with
+                    | "" -> k
+                    | _ -> path + ":" + k
+                match v with
+                | Object kvs -> foldJsonObjectToMap prefix state kvs
+                | Json.String v -> state |> Map.add prefix v
+                | _ -> state)
+            state
+    tryParse jsonString
+    |> function
+        | Some (Object kvs) -> foldJsonObjectToMap "" Map.empty kvs
+        | _ -> Map.empty
+            
