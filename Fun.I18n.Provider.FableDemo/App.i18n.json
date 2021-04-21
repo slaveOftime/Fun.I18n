@@ -1,5 +1,6 @@
 ﻿{
   "App": {
-    "Title": "This is the coolest app"
+    "Title": "This is the coolest app",
+    "FormatAll": "String: %s{strVar}; Int: %d{intVar}; Float: %f{floatVar}; Any: %{anyVar}"
   }
 }

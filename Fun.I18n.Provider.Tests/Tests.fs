@@ -5,7 +5,7 @@ open Xunit
 
 let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 
-type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath>
+type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, false>
 let i18n = I18N (File.ReadAllText TestJsonFilePath)
 
 

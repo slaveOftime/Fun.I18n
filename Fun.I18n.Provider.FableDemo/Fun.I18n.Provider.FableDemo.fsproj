@@ -10,7 +10,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Feliz" Version="1.37.0" />
-		<PackageReference Include="Fun.I18n.Provider" Version="1.1.1" />
+		<PackageReference Include="Fun.I18n.Provider" Version="1.0.0-beta2" />
 		<PackageReference Include="Zanaptak.TypedCssClasses" Version="0.4.0" />
 	</ItemGroup>
 	
