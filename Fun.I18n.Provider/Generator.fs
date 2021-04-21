@@ -1,12 +1,15 @@
-﻿namespace Fun.I18n.Provider
+﻿namespace Fable.Core
+
+type EmitAttribute(macro: string) =
+    inherit System.Attribute()
+
+
+namespace Fun.I18n.Provider
 
 open System.Text.RegularExpressions
 open ProviderImplementation.ProvidedTypes
 
 open ProviderDsl
-
-
-type I18nBundle = { JsonData: Map<string, string> }
 
 
 module internal Generator =
@@ -19,10 +22,10 @@ module internal Generator =
             ("Translate", [ "key", ErasedType.String ], ErasedType.String, false
             ,fun args ->
                 <@@
-                    let bundle = (%%args.[0]: obj) :?> I18nBundle
+                    let bundle = (%%args.[0]: obj) :?> Map<string, string>
                     let key = %%args.[1]: string
                     let path = if path.Length > 0 then path + ":" + key else key
-                    bundle.JsonData
+                    bundle
                     |> Map.tryFind path
                     |> Option.defaultValue key
                 @@>)
@@ -79,8 +82,8 @@ module internal Generator =
                         (memberName, String, false
                         ,fun args -> 
                             <@@
-                                let bundle = (%%args.[0]: obj) :?> I18nBundle
-                                bundle.JsonData
+                                let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                                bundle
                                 |> Map.tryFind path
                                 |> Option.defaultValue name
                             @@>)
@@ -108,8 +111,8 @@ module internal Generator =
                         ,fun args ->
                             let unformattedValue =
                                 <@
-                                    let bundle = (%%args.[0]: obj) :?> I18nBundle
-                                    match Map.tryFind path bundle.JsonData with
+                                    let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                                    match Map.tryFind path bundle with
                                     | None -> name
                                     | Some value ->
                                         if value.Contains SMART_COUNT_SPLITER then
@@ -140,8 +143,8 @@ module internal Generator =
                         ,fun args ->
                             let unformattedValue =
                                 <@
-                                    let bundle = (%%args.[0]: obj) :?> I18nBundle
-                                    match Map.tryFind path bundle.JsonData with
+                                    let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                                    match Map.tryFind path bundle with
                                     | None -> name
                                     | Some value -> value
                                 @>
@@ -166,6 +169,15 @@ module internal Generator =
             ]
 
 
+    #if !FABLE_COMPILER
+    let inline parseToMap x = JsonParser.parseToMap x
+    #else
+    open Fable.Core
+    [<Emit("window.funI18nParseToMap($0)")>]
+    let parseToMap (x: string) = obj()
+    #endif
+
+
     let createProviderTypeDefinition asm ns typeName sample =
         let makeRootType basicMembers =
             makeRootType(asm, ns, typeName, [
@@ -173,7 +185,7 @@ module internal Generator =
                 translateMethod ""
                 Constructor
                     ([ "jsonString", String ]
-                    ,fun args -> <@@ { JsonData = Utils.parseToMap %%args.[0] } @@>)
+                    ,fun args -> <@@ parseToMap %%args.[0] @@>)
             ])
 
         match JsonParser.tryParse sample with

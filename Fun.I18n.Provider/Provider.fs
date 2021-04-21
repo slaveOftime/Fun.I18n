@@ -1,5 +1,6 @@
 ﻿namespace Fun.I18n.Provider
 
+open System.Reflection
 open System.Text.RegularExpressions
 open Microsoft.FSharp.Core.CompilerServices
 open Fable.SimpleHttp
@@ -8,14 +9,14 @@ open ProviderImplementation.ProvidedTypes
 
 
 [<TypeProvider>]
-type public Provider (config : TypeProviderConfig) as this =
+type TypeProvider (config : TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces (config)
 
-    let asm = System.Reflection.Assembly.GetExecutingAssembly()
+    let asm = Assembly.GetExecutingAssembly()
     let ns = "Fun.I18n.Provider"
 
-    let staticParams = [ProvidedStaticParameter("i18nFilePathOrUrl",typeof<string>)]
     let generator = ProvidedTypeDefinition(asm, ns, "I18nProvider", Some typeof<obj>, isErased = true)
+    let staticParams = [ProvidedStaticParameter("i18nFilePathOrUrl",typeof<string>)]
 
     let watcherSubscriptions = System.Collections.Concurrent.ConcurrentDictionary<string, System.IDisposable>()
 

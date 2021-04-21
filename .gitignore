@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Fun.I18n.Provider.FableDemo/www/.parcel-cache
+/Fun.I18n.Provider.FableDemo/www/css/tailwind-generated.css
+/Fun.I18n.Provider.FableDemo/www/.dist
+/Fun.I18n.Provider.FableDemo/www/fablejs

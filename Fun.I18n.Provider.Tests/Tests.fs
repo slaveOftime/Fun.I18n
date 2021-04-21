@@ -2,11 +2,10 @@ module Fun.I18n.Provider.Tests
 
 open System.IO
 open Xunit
-open Fun.I18n.Provider
 
 let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 
-type I18N = I18nProvider<TestJsonFilePath>
+type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath>
 let i18n = I18N (File.ReadAllText TestJsonFilePath)
 
 

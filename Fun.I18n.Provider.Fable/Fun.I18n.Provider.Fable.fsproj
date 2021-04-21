@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Utils.fs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fable.Core" Version="3.2.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="*.fsproj; **\*.fs" Exclude="obj\**\*.*" PackagePath="fable\" />
+	</ItemGroup>
+
+</Project>
