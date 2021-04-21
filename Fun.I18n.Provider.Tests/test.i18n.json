@@ -1,0 +1,16 @@
+﻿{
+  "App": {
+    "Title": "This is the coolest app",
+    "Save": "Save your time",
+    "Errors": {
+      "UserNotFound": "User (%{id}) is not found",
+      "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors",
+      "ErrorMessage": "Error message is %s{msg}",
+      "ErrorCode": "Error message code is %d{code}",
+      "ErrorMs": "Error message: time spent (%f{time}ms)"
+    }
+  },
+  "Complex": {
+    "FormatAll": "String: %s{strVar}; Int: %d{intVar}; Float: %f{floatVar}; Any: %{anyVar}"
+  }
+}

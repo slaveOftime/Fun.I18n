@@ -82,25 +82,3 @@ let tryGetObjectValue name json =
 
 
 let tryParse s = (|ParseJSON|_|) (s, 0) |> Option.map fst
-let parse = tryParse >> Option.get
-
-
-let parseToMap jsonString =
-    let rec foldJsonObjectToMap path (state: Map<string, string>) (keyValues: (string * Json) list) =
-        keyValues
-        |> List.fold
-            (fun state (k, v) ->
-                let prefix =
-                    match path with
-                    | "" -> k
-                    | _ -> path + ":" + k
-                match v with
-                | Object kvs -> foldJsonObjectToMap prefix state kvs
-                | Json.String v -> state |> Map.add prefix v
-                | _ -> state)
-            state
-    tryParse jsonString
-    |> function
-        | Some (Object kvs) -> foldJsonObjectToMap "" Map.empty kvs
-        | _ -> Map.empty
-            

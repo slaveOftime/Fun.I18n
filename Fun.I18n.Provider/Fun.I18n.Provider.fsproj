@@ -9,6 +9,7 @@
 		<Compile Include="ProviderDsl.fs" />
 		<Compile Include="JsonParser.fs" />
 		<Compile Include="FileWatcher.fs" />
+		<Compile Include="Utils.fs" />
 		<Compile Include="Generator.fs" />
 		<Compile Include="Provider.fs" />
 	</ItemGroup>
@@ -18,4 +19,8 @@
 		<PackageReference Include="Fable.SimpleHttp" Version="3.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Include="Utils.fs" PackagePath="fable\" />
+	</ItemGroup>
+	
 </Project>
