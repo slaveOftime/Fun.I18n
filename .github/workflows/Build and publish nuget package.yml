@@ -1,0 +1,34 @@
+name: Build and publish nuget packages
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Test
+      run: dotnet fsi ./build.fsx
+
+    - name: Publish Fun.I18n.Provider.Fable
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+          PROJECT_FILE_PATH: Fun.I18n.Provider.Fable/Fun.I18n.Provider.Fable.fsproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+    - name: Publish Fun.I18n.Provider
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+          PROJECT_FILE_PATH: Fun.I18n.Provider/Fun.I18n.Provider.fsproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}

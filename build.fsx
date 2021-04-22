@@ -13,6 +13,7 @@ open Fake.JavaScript
 open BlackFox.Fake
 
 let clientProjectDir = "Fun.I18n.Provider.FableDemo"
+let testProjectDir = "Fun.I18n.Provider.Tests"
 let publishDir = __SOURCE_DIRECTORY__ </> "publish"
 
 
@@ -38,5 +39,12 @@ let bundleClient =
         WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" clientProjectDir (publishDir </> "client")
     }
 
+let test =
+    BuildTask.create "Test" [] {
+        DotNet.exec (fun op -> { op with WorkingDirectory = testProjectDir }) "run" "" |> ignore
+        Yarn.install (fun op -> { op with WorkingDirectory = testProjectDir })
+        Yarn.exec "test" (fun op -> { op with WorkingDirectory = testProjectDir })
+    }
 
-BuildTask.runOrDefault startCientDev
+
+BuildTask.runOrDefault test
