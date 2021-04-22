@@ -16,13 +16,6 @@ dotnet add package Fun.I18n.Provider
 
 let [<Literal>] I18nJsonFileTemplate = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 
-#if !FABLE_COMPILER
-type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, false>
-#else
-type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, true>
-#endif
-
-
 // You can fetch from server
 let translatedI18nJson =
     """
@@ -35,12 +28,14 @@ let translatedI18nJson =
     }
     """
 
-#if FABLE_COMPILER
-// This is required when use fable for pulling some dependencies
-// It should be used in the same file with the provided type: I18N
-Fun.I18n.Provider.Fable.Utils.setup()
-#endif
+#if !FABLE_COMPILER
+type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, false>
 let i18n = I18N translatedI18nJson
+#else
+type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, true>
+let i18n = Fun.I18n.Provider.Fable.Utils.createI18n I18N translatedI18nJson // Use createI18n to pull dependencies for fable
+#endif
+
 
 // Now you are good to go
 i18n.App.Title // This is the coolest app

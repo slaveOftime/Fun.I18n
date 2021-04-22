@@ -23,7 +23,7 @@ let translate (bundle: Map<string, string>) (path: string) (key: string) =
     let path = if path.Length > 0 then path + ":" + key else key
     bundle
     |> Map.tryFind path
-    |> Option.defaultValue key
+    |> Option.defaultValue path
 
 
 let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: string list) (args: obj list) =
@@ -48,7 +48,7 @@ let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: str
         (unformattedString)
 
 
-let parseToMap (jsonString: string) : Map<string, string> =
+let parseToI18nMap (jsonString: string) : Map<string, string> =
     let rec foldJsonObjectToMap path (state: Map<string, string>) (keyValues: (string * obj) []) =
         keyValues
         |> Array.fold
@@ -67,7 +67,7 @@ let parseToMap (jsonString: string) : Map<string, string> =
         |> objectEntries
         |> foldJsonObjectToMap "" Map.empty
 
-    addDataToObject bundle "$funI18n"
+    addDataToObject bundle "$i18n"
         {|
             translate = translate
             translateWith = translateWith
@@ -77,5 +77,11 @@ let parseToMap (jsonString: string) : Map<string, string> =
 
 
 let inline setup () = 
-    let _ = parseToMap
+    let _ = parseToI18nMap
     ()
+
+
+// Use this to pull dependencies for fable
+let inline createI18n (i18n: string -> 'I18N) (jsonString: string) =
+    let _ = parseToI18nMap
+    i18n jsonString

@@ -12,7 +12,6 @@ let expectedTestJson =
     {
       "App": {
         "Title": "This is the coolest app",
-        "Save": "Save your time",
         "Errors": {
           "UserNotFound": "User (%{id}) is not found",
           "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors",
@@ -32,12 +31,11 @@ let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 
 #if !FABLE_COMPILER
 type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, false>
-#else
-Fun.I18n.Provider.Fable.Utils.setup()
-type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, true>
-#endif
-
 let i18n = I18N expectedTestJson
+#else
+type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, true>
+let i18n = Fun.I18n.Provider.Fable.Utils.createI18n I18N expectedTestJson
+#endif
 
 
 let tests =
@@ -51,9 +49,12 @@ let tests =
         testCase "Translation method tests" <| fun () ->
             Expect.equal (i18n.Translate("App:Title")) "This is the coolest app" ""
             Expect.equal (i18n.App.Translate("Title")) "This is the coolest app" ""
-            Expect.equal (i18n.Translate("Errors")) "Errors" ""
             Expect.equal (i18n.Translate("App:Errors")) "App:Errors" ""
-            Expect.equal (i18n.App.Translate("Errors")) "Errors" ""
+
+        testCase "Should return full path for not translated value" <| fun () ->
+            Expect.equal (i18n.App.Save) "App:Save" ""
+            Expect.equal (i18n.Translate "App:Save") "App:Save" ""
+            Expect.equal (i18n.App.Translate "Save") "App:Save" ""
     ]
 
 

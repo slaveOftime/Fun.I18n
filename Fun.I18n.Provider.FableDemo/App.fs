@@ -40,11 +40,10 @@ let locale =
         def (nameof en)
     }
 
-let i18n = 
-    Fun.I18n.Provider.Fable.Utils.setup()
+let i18n =
     atom {
         key "App.I18n"
-        def (I18N en)
+        def (Fun.I18n.Provider.Fable.Utils.createI18n I18N en)
     }
 
 let useLocaleSwitch () =
@@ -55,8 +54,8 @@ let useLocaleSwitch () =
         if loc <> locale then
             setLocale loc
             match loc with
-            | nameof en -> setI18n (I18N en)
-            | nameof zhcn -> setI18n (I18N zhcn)
+            | nameof en -> setI18n (Fun.I18n.Provider.Fable.Utils.createI18n I18N en)
+            | nameof zhcn -> setI18n (Fun.I18n.Provider.Fable.Utils.createI18n I18N zhcn)
             | _ -> ()
 
     switch

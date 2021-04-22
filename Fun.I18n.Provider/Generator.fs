@@ -17,14 +17,15 @@ module internal Generator =
     let [<Literal>] SMART_COUNT_SPLITER = "||||"
 
     
-    [<Fable.Core.Emit("parseToMap($0)")>]
+    [<Fable.Core.Emit("parseToI18nMap($0)")>]
     let parseToMap (x: string) = obj()
 
-    [<Fable.Core.Emit("$0.$funI18n.translate($0, $1, $2)")>]
+    [<Fable.Core.Emit("$0.$i18n.translate($0, $1, $2)")>]
     let translate (bundle: Map<string, string>) (path: string) (key: string) = obj()
     
-    [<Fable.Core.Emit("$1.$funI18n.translateWith($0, $1, $2, $3, $4)")>]
+    [<Fable.Core.Emit("$1.$i18n.translateWith($0, $1, $2, $3, $4)")>]
     let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: string list) (args: obj list) = obj()
+
 
     let translateMethod forFable (path: string) =
         Method
@@ -39,7 +40,7 @@ module internal Generator =
                         let path = if path.Length > 0 then path + ":" + key else key
                         bundle
                         |> Map.tryFind path
-                        |> Option.defaultValue key
+                        |> Option.defaultValue path
                     @@>)
 
     
@@ -58,6 +59,7 @@ module internal Generator =
                     state.Replace(name, %arg)
                 @>)
             state
+
 
     let getMethodsFieldArgs args =
         args 
@@ -101,13 +103,13 @@ module internal Generator =
                         (memberName, String, false
                         ,fun args ->
                             if forFable then
-                                <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) path name @@>
+                                <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) "" fullPath @@>
                             else
                                 <@@
                                     let bundle = (%%args.[0]: obj) :?> Map<string, string>
                                     bundle
                                     |> Map.tryFind fullPath
-                                    |> Option.defaultValue name
+                                    |> Option.defaultValue fullPath
                                 @@>)
                 ]
 
