@@ -15,26 +15,8 @@ let isObject (data: obj): bool = jsNative
 [<Emit("typeof $0 === 'string'")>]
 let isString (data: obj): bool = jsNative
 
-[<Emit("window.$funI18n = $0")>]
-let setFunI18nToWindow (data: obj) = jsNative
-
-
-let parseToMap (jsonString: string) : Map<string, string> =
-    let rec foldJsonObjectToMap path (state: Map<string, string>) (keyValues: (string * obj) []) =
-        keyValues
-        |> Array.fold
-            (fun state (key, value) ->
-                let prefix =
-                    match path with
-                    | "" -> key
-                    | _ -> path + ":" + key
-                if isObject value then foldJsonObjectToMap prefix state (objectEntries value)
-                elif isString value then state |> Map.add prefix (string value)
-                else state)
-            state
-    jsonParse jsonString
-    |> objectEntries
-    |> foldJsonObjectToMap "" Map.empty
+[<Emit("$0[$1] = $2")>]
+let addDataToObject (target: 'T) key (data: obj): unit = jsNative
 
 
 let translate (bundle: Map<string, string>) (path: string) (key: string) =
@@ -44,7 +26,7 @@ let translate (bundle: Map<string, string>) (path: string) (key: string) =
     |> Option.defaultValue key
 
 
-let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: (string * string) list) (args: obj list) =
+let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: string list) (args: obj list) =
     let SMART_COUNT_SPLITER = "||||"
 
     let unformattedString =
@@ -60,22 +42,40 @@ let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: str
             value
 
     args
-    |> List.mapi (fun i arg ->
-        match fieldDefs.[i] with
-        | name, _ when name = "smart_count" -> "%{smart_count}", string arg
-        | name, "String"                    -> "%s{" + name + "}", string arg
-        | name, "Int"                       -> "%d{" + name + "}", string arg
-        | name, "Float"                     -> "%f{" + name + "}", string arg
-        | name, _                           -> "%{" + name + "}", string arg)
+    |> List.mapi (fun i arg -> "%{" + fieldDefs.[i] + "}", string arg)
     |> List.fold
         (fun (state: string) (name, arg) -> state.Replace(name, arg))
         (unformattedString)
 
 
-let setUp () = 
-    setFunI18nToWindow
+let parseToMap (jsonString: string) : Map<string, string> =
+    let rec foldJsonObjectToMap path (state: Map<string, string>) (keyValues: (string * obj) []) =
+        keyValues
+        |> Array.fold
+            (fun state (key, value) ->
+                let prefix =
+                    match path with
+                    | "" -> key
+                    | _ -> path + ":" + key
+                if isObject value then foldJsonObjectToMap prefix state (objectEntries value)
+                elif isString value then state |> Map.add prefix (string value)
+                else state)
+            state
+
+    let bundle =
+        jsonParse jsonString
+        |> objectEntries
+        |> foldJsonObjectToMap "" Map.empty
+
+    addDataToObject bundle "$funI18n"
         {|
-            parseToMap = parseToMap
             translate = translate
             translateWith = translateWith
         |}
+        
+    bundle
+
+
+let inline setUp () = 
+    let _ = parseToMap
+    ()

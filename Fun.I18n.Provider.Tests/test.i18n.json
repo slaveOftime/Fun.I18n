@@ -5,12 +5,12 @@
     "Errors": {
       "UserNotFound": "User (%{id}) is not found",
       "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors",
-      "ErrorMessage": "Error message is %s{msg}",
-      "ErrorCode": "Error message code is %d{code}",
-      "ErrorMs": "Error message: time spent (%f{time}ms)"
+      "ErrorMessage": "Error message is %{msg}",
+      "ErrorCode": "Error message code is %{code}",
+      "ErrorMs": "Error message: time spent (%{time}ms)"
     }
   },
   "Complex": {
-    "FormatAll": "String: %s{strVar}; Int: %d{intVar}; Float: %f{floatVar}; Any: %{anyVar}"
+    "FormatAll": "String: %{strVar}; Int: %{intVar}; Float: %{floatVar}"
   }
 }

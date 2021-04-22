@@ -16,10 +16,10 @@ let watchFile fn file =
     watcher.Changed.Add (fun _ -> fn())
     watcher.EnableRaisingEvents <- true
 
-let private runFable projectDir isDebug isWatch =
+let private runFable fableArgs projectDir isDebug isWatch =
     let mode = match isWatch with false -> "" | true -> "watch"
     let config = if isDebug then " --define DEBUG" else ""
-    DotNet.exec (fun x -> { x with WorkingDirectory = projectDir }) "fable" $"{mode} . --outDir ./www/fablejs{config}" |> ignore
+    DotNet.exec (fun x -> { x with WorkingDirectory = projectDir }) "fable" $"{mode} . --outDir ./www/fablejs{config} %s{fableArgs}" |> ignore
 
 let private cleanGeneratedJs projectDir = Shell.cleanDir (projectDir </> "www/fablejs")
 
@@ -34,15 +34,15 @@ let private watchTailwindCss projectDir =
     |> List.iter (watchFile (fun () -> buildTailwindCss projectDir))
 
 
-let startDev projectDir port =
+let startDev fableArgs projectDir port =
     cleanGeneratedJs projectDir
     buildTailwindCss projectDir
 
-    runFable projectDir true false
+    runFable fableArgs projectDir true false
 
     [
         async {
-            runFable  projectDir true true
+            runFable fableArgs projectDir true true
         }
         async {
             watchTailwindCss projectDir
@@ -56,9 +56,9 @@ let startDev projectDir port =
     |> ignore
 
 
-let bundle projectDir outDir =
+let bundle fableArgs projectDir outDir =
     cleanGeneratedJs projectDir
     buildTailwindCss projectDir
-    runFable projectDir false false
+    runFable fableArgs projectDir false false
     Shell.cleanDir outDir
     Yarn.exec $"parcel build index.html --dist-dir {outDir} --public-url ./ --no-source-maps --no-cache" (fun x -> { x with WorkingDirectory = projectDir </> "www" })

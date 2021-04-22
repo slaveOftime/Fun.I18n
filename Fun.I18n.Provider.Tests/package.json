@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "dotnet fable -o .dist/tests --define FABLE_COMPILER --exclude Fun.I18n.Provider.fsproj && mocha .dist/tests"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
+  }
+}

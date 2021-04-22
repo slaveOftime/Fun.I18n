@@ -8,7 +8,8 @@ let demoJson = """
 {
   "App": {
     "Title": "This is the coolest app",
-    "FormatAll": "String: %s{strVar}; Int: %d{intVar}; Float: %f{floatVar}; Any: %{anyVar}"
+    "FormatAll": "String: %{strVar}; Int: %{intVar}; Float: %{floatVar}; Any: %{anyVar}",
+    "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors"
   }
 }
 """
@@ -26,8 +27,10 @@ let i18n = I18N demoJson
 let App () = 
     div [
         div i18n.App.Title
-        div (i18n.App.FormatAll({| data= "any" |}, 123., 123, "fun string"))
+        div (i18n.App.FormatAll("cool string", 123, 1234., "any"))
         div (i18n.Translate "App:FormatAll")
+        div (i18n.App.GotErrors 1)
+        div (i18n.App.GotErrors 2)
     ]
 
 

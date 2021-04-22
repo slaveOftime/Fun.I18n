@@ -1,6 +1,7 @@
 ﻿{
   "App": {
     "Title": "This is the coolest app",
-    "FormatAll": "String: %s{strVar}; Int: %d{intVar}; Float: %f{floatVar}; Any: %{anyVar}"
+    "FormatAll": "String: %{strVar}; Int: %{intVar}; Float: %{floatVar}; Any: %{anyVar}",
+    "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors"
   }
 }

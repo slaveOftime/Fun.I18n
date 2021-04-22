@@ -17,21 +17,21 @@ module internal Generator =
     let [<Literal>] SMART_COUNT_SPLITER = "||||"
 
     
-    [<Fable.Core.Emit("window.$funI18n.parseToMap($0)")>]
+    [<Fable.Core.Emit("parseToMap($0)")>]
     let parseToMap (x: string) = obj()
 
-    [<Fable.Core.Emit("window.$funI18n.translate($0, $1, $2)")>]
+    [<Fable.Core.Emit("$0.$funI18n.translate($0, $1, $2)")>]
     let translate (bundle: Map<string, string>) (path: string) (key: string) = obj()
     
-    [<Fable.Core.Emit("window.$funI18n.translateWith($0, $1, $2, $3, $4)")>]
-    let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: (string * string) list) (args: obj list) = obj()
+    [<Fable.Core.Emit("$1.$funI18n.translateWith($0, $1, $2, $3, $4)")>]
+    let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: string list) (args: obj list) = obj()
 
     let translateMethod forFable (path: string) =
         Method
             ("Translate", [ "key", ErasedType.String ], ErasedType.String, false
             ,fun args ->
-                if forFable then 
-                    <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) (%%args.[1]: string) path @@>
+                if forFable then
+                    <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) path (%%args.[1]: string) @@>
                 else
                     <@@
                         let bundle = (%%args.[0]: obj) :?> Map<string, string>
@@ -47,12 +47,10 @@ module internal Generator =
         args
         |> List.tail
         |> List.mapi (fun i arg ->
-            match fieldDefs.[i] with
-            | name, _ when name = SMART_COUNT   -> "%{" + SMART_COUNT + "}", <@ (%%arg: int) |> string @>
-            | name, ErasedType.String           -> "%s{" + name + "}", <@ %%arg: string @>
-            | name, ErasedType.Int              -> "%d{" + name + "}", <@ (%%arg: int) |> string @>
-            | name, ErasedType.Float            -> "%f{" + name + "}", <@ (%%arg: float) |> string @>
-            | name, _                           -> "%{" + name + "}",  <@ (%%arg: obj) |> string @>)
+            "%{" + fst fieldDefs.[i] + "}"
+            ,(match fieldDefs.[i] with
+              | SMART_COUNT, ErasedType.Int -> <@ (%%arg: int) |> string @>
+              | _ -> <@ (%%arg: obj) |> string @>))
         |> List.fold
             (fun state (name, arg) ->
                 <@
@@ -61,9 +59,21 @@ module internal Generator =
                 @>)
             state
 
+    let getMethodsFieldArgs args =
+        args 
+        |> List.tail 
+        |> List.fold 
+            (fun state x ->
+                <@ 
+                    let state = %state: obj list
+                    let x = %%x: obj
+                    state@[x]
+                @>)
+            <@ [] @>
+
 
     let rec makeMember forFable (path:string) (name, json) =
-        let path = if path.Length > 0 then path + ":" + name else name
+        let fullPath = if path.Length > 0 then path + ":" + name else name
         match json with
         | JsonParser.Null -> []
         | JsonParser.Bool _ -> []
@@ -79,11 +89,8 @@ module internal Generator =
                 |> Seq.toList
 
             let anyParameters = searchParameters "%{(.*?)}"
-            let stringParameters = searchParameters "%s{(.*?)}"
-            let intParameters = searchParameters "%d{(.*?)}"
-            let floatParameters = searchParameters "%f{(.*?)}"
 
-            let hasParameters = anyParameters.Length > 0 || stringParameters.Length > 0 || intParameters.Length > 0 || floatParameters.Length > 0
+            let hasParameters = anyParameters.Length > 0
             let hasMultipleTranslations = value.Contains SMART_COUNT_SPLITER
             let hasSmartCount = anyParameters |> Seq.contains SMART_COUNT
 
@@ -94,87 +101,75 @@ module internal Generator =
                         (memberName, String, false
                         ,fun args ->
                             if forFable then
-                                <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) "" path @@>
+                                <@@ translate ((%%args.[0]: obj) :?> Map<string, string>) path name @@>
                             else
                                 <@@
                                     let bundle = (%%args.[0]: obj) :?> Map<string, string>
                                     bundle
-                                    |> Map.tryFind path
+                                    |> Map.tryFind fullPath
                                     |> Option.defaultValue name
                                 @@>)
-                ]
-
-            elif hasMultipleTranslations && hasSmartCount then
-                let argFields =
-                    [
-                        if hasSmartCount then SMART_COUNT, ErasedType.Int
-                        yield!
-                            [
-                                yield!
-                                    anyParameters
-                                    |> List.filter (fun x -> x <> SMART_COUNT)
-                                    |> List.map (fun name -> name, ErasedType.Any)
-                                yield! stringParameters |> List.map (fun name -> name, ErasedType.String)
-                                yield! intParameters |> List.map (fun name -> name, ErasedType.Int)
-                                yield! floatParameters |> List.map (fun name -> name, ErasedType.Float)
-                            ]
-                            |> List.sortBy fst
-                    ]
-                [
-                    Method
-                        (name, argFields, String, false
-                        ,fun args ->
-                            if forFable then
-                                let fieldDefs = argFields |> List.map (fun (name, ty) -> name, string ty)
-                                let fieldArgs = args |> List.tail |> List.map (fun x -> box x)
-                                <@@ translateWith true ((%%args.[0]: obj) :?> Map<string, string>) path fieldDefs fieldArgs @@>
-                            else
-                                let unformattedValue =
-                                    <@
-                                        let bundle = (%%args.[0]: obj) :?> Map<string, string>
-                                        match Map.tryFind path bundle with
-                                        | None -> name
-                                        | Some value ->
-                                            if value.Contains SMART_COUNT_SPLITER then
-                                                let count: int = %%args.[1]
-                                                let index = value.IndexOf SMART_COUNT_SPLITER
-                                                if count = 0 || count = 1 then
-                                                    value.Substring(0, index).Trim()
-                                                else
-                                                    value.Substring(index + SMART_COUNT_SPLITER.Length).Trim()
-                                            else
-                                                value
-                                    @>
-                                <@@ %(formatWithArgs argFields args unformattedValue) @@>)
                 ]
 
             else
                 let argFields =
                     [
-                        yield! anyParameters |> List.map (fun name -> name, ErasedType.Any)
-                        yield! stringParameters |> List.map (fun name -> name, ErasedType.String)
-                        yield! intParameters |> List.map (fun name -> name, ErasedType.Int)
-                        yield! floatParameters |> List.map (fun name -> name, ErasedType.Float)
+                        if hasSmartCount then
+                            if forFable then SMART_COUNT, ErasedType.Any
+                            else SMART_COUNT, ErasedType.Int
+                        yield!
+                            anyParameters
+                            |> List.filter (fun x -> x <> SMART_COUNT)
+                            |> List.map (fun name -> name, ErasedType.Any)
                     ]
-                    |> List.sortBy fst
-                [
-                    Method
-                        (name, argFields, String, false
-                        ,fun args ->
-                            if forFable then
-                                let fieldDefs = argFields |> List.map (fun (name, ty) -> name, string ty)
-                                let fieldArgs = args |> List.tail |> List.map (fun x -> box x)
-                                <@@ translateWith true ((%%args.[0]: obj) :?> Map<string, string>) path fieldDefs fieldArgs @@>
-                            else
-                                let unformattedValue =
-                                    <@
-                                        let bundle = (%%args.[0]: obj) :?> Map<string, string>
-                                        match Map.tryFind path bundle with
-                                        | None -> name
-                                        | Some value -> value
-                                    @>
-                                <@@ %(formatWithArgs argFields args unformattedValue) @@>)
-                ]
+                if hasMultipleTranslations && hasSmartCount then
+                    [
+                        Method
+                            (name, argFields, String, false
+                            ,fun args ->
+                                if forFable then
+                                    let fieldDefs = argFields |> List.map fst
+                                    let fieldArgs = getMethodsFieldArgs args
+                                    <@@ translateWith true ((%%args.[0]: obj) :?> Map<string, string>) fullPath fieldDefs %fieldArgs @@>
+                                else
+                                    let unformattedValue =
+                                        <@
+                                            let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                                            match Map.tryFind fullPath bundle with
+                                            | None -> name
+                                            | Some value ->
+                                                if value.Contains SMART_COUNT_SPLITER then
+                                                    let count = %%args.[1]: int
+                                                    let index = value.IndexOf SMART_COUNT_SPLITER
+                                                    if count = 0 || count = 1 then
+                                                        value.Substring(0, index).Trim()
+                                                    else
+                                                        value.Substring(index + SMART_COUNT_SPLITER.Length).Trim()
+                                                else
+                                                    value
+                                        @>
+                                    <@@ %(formatWithArgs argFields args unformattedValue) @@>)
+                    ]
+
+                else
+                    [
+                        Method
+                            (name, argFields, String, false
+                            ,fun args ->
+                                if forFable then
+                                    let fieldDefs = argFields |> List.map fst
+                                    let fieldArgs = getMethodsFieldArgs args
+                                    <@@ translateWith true ((%%args.[0]: obj) :?> Map<string, string>) fullPath fieldDefs %fieldArgs @@>
+                                else
+                                    let unformattedValue =
+                                        <@
+                                            let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                                            match Map.tryFind fullPath bundle with
+                                            | None -> name
+                                            | Some value -> value
+                                        @>
+                                    <@@ %(formatWithArgs argFields args unformattedValue) @@>)
+                    ]
 
         | JsonParser.Array _ -> []
         | JsonParser.Object members ->
@@ -182,9 +177,9 @@ module internal Generator =
                 members 
                 |> List.collect (fun memb ->
                     [
-                        yield! makeMember forFable path memb
+                        yield! makeMember forFable fullPath memb
                         match memb with
-                        | _, JsonParser.Object _ -> translateMethod forFable path
+                        | _, JsonParser.Object _ -> translateMethod forFable fullPath
                         | _ -> ()
                     ])
             let nestedType = makeCustomType(name, members)

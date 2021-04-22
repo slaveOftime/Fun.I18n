@@ -30,12 +30,12 @@ let checkEnv =
 
 let startCientDev =
     BuildTask.create "StartClientDev" [ checkEnv ] {
-        WebClient.startDev clientProjectDir 8080
+        WebClient.startDev "--exclude Fun.I18n.Provider.fsproj" clientProjectDir 8080
     }
 
 let bundleClient =
     BuildTask.create "BundleClient" [ checkEnv ] {
-        WebClient.bundle clientProjectDir (publishDir </> "client")
+        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" clientProjectDir (publishDir </> "client")
     }
 
 
