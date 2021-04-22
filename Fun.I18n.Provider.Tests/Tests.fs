@@ -33,7 +33,7 @@ let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 #if !FABLE_COMPILER
 type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, false>
 #else
-Fun.I18n.Provider.Fable.Utils.setUp()
+Fun.I18n.Provider.Fable.Utils.setup()
 type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, true>
 #endif
 

@@ -76,6 +76,6 @@ let parseToMap (jsonString: string) : Map<string, string> =
     bundle
 
 
-let inline setUp () = 
+let inline setup () = 
     let _ = parseToMap
     ()

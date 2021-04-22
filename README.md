@@ -19,7 +19,6 @@ let [<Literal>] I18nJsonFileTemplate = __SOURCE_DIRECTORY__ + "/test.i18n.json"
 #if !FABLE_COMPILER
 type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, false>
 #else
-Fun.I18n.Provider.Fable.Utils.setUp() // This is required when use fable for pulling some dependencies
 type I18N = Fun.I18n.Provider.I18nProvider<I18nJsonFileTemplate, true>
 #endif
 
@@ -36,6 +35,11 @@ let translatedI18nJson =
     }
     """
 
+#if FABLE_COMPILER
+// This is required when use fable for pulling some dependencies
+// It should be used in the same file with the provided type: I18N
+Fun.I18n.Provider.Fable.Utils.setup()
+#endif
 let i18n = I18N translatedI18nJson
 
 // Now you are good to go
