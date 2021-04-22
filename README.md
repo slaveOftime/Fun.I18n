@@ -1,8 +1,8 @@
 # Fun.I18n.Provider [![Nuget](https://img.shields.io/nuget/v/Fun.I18n.Provider)](https://www.nuget.org/packages/Fun.I18n.Provider)
 
-This project provide a simple i18n provider which base on the [Titaye](https://github.com/Titaye/Fable.PolyglotProvider) and [Fable.JsonProvider](https://github.com/fable-compiler/Fable.JsonProvider).
+This project provide a simple i18n provider which is based on the [Titaye](https://github.com/Titaye/Fable.PolyglotProvider) and [Fable.JsonProvider](https://github.com/fable-compiler/Fable.JsonProvider).
 
-The different is I tried to support dotnet and fable at the same time and removed the `node-polyglot` with my own simple implementation.
+The difference is that I try to support dotnet and fable at the same time and removed the `node-polyglot` with my own simple implementation.
 
 I also use this project to try fsharp typeprovider and finally learned something.
 
