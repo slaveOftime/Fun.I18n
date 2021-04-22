@@ -20,18 +20,16 @@ jobs:
 
     - name: Install dependencies
       run: dotnet tool restore
-      
+
     - name: Test
       run: dotnet fsi ./build.fsx
 
     - name: Publish Fun.I18n.Provider.Fable
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      with:
-          PROJECT_FILE_PATH: Fun.I18n.Provider.Fable/Fun.I18n.Provider.Fable.fsproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      run: |
+        dotnet pack -c Release Fun.I18n.Provider.Fable/Fun.I18n.Provider.Fable.fsproj -o .
+        dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
 
     - name: Publish Fun.I18n.Provider
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      with:
-          PROJECT_FILE_PATH: Fun.I18n.Provider/Fun.I18n.Provider.fsproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      run: |
+        dotnet pack -c Release Fun.I18n.Provider/Fun.I18n.Provider.fsproj -o .
+        dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
