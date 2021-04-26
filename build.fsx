@@ -12,7 +12,8 @@ open Fake.DotNet
 open Fake.JavaScript
 open BlackFox.Fake
 
-let clientProjectDir = "Fun.I18n.Provider.FableDemo"
+let editorProjectDir = "Fun.I18n.Editor"
+let demoProjectDir = "Fun.I18n.Provider.FableDemo"
 let testProjectDir = "Fun.I18n.Provider.Tests"
 let publishDir = __SOURCE_DIRECTORY__ </> "publish"
 
@@ -25,19 +26,33 @@ fsi.CommandLineArgs
 let checkEnv =
     BuildTask.create "CheckEnv" [] {
         Yarn.exec "--version" id
-        Yarn.install (fun x -> { x with WorkingDirectory = clientProjectDir </> "www" })
+        Yarn.install (fun x -> { x with WorkingDirectory = demoProjectDir </> "www" })
+        Yarn.install (fun x -> { x with WorkingDirectory = editorProjectDir </> "www" })
         DotNet.exec id "tool restore" "" |> ignore
     }
 
-let startCientDev =
-    BuildTask.create "StartClientDev" [ checkEnv ] {
-        WebClient.startDev "--exclude Fun.I18n.Provider.fsproj" clientProjectDir 8080
+
+let startDemoDev =
+    BuildTask.create "StartDemoDev" [ checkEnv ] {
+        WebClient.startDev "--exclude Fun.I18n.Provider.fsproj" demoProjectDir 8080
     }
 
-let bundleClient =
-    BuildTask.create "BundleClient" [ checkEnv ] {
-        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" clientProjectDir (publishDir </> "client")
+let bundleDemo =
+    BuildTask.create "BundleDemo" [ checkEnv ] {
+        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" demoProjectDir (publishDir </> "client")
     }
+
+
+let startEditorDev =
+    BuildTask.create "StartEditorDev" [ checkEnv ] {
+        WebClient.startDev "--exclude Fun.I18n.Provider.fsproj" editorProjectDir 8081
+    }
+
+let bundleEditor =
+    BuildTask.create "BundleEditor" [ checkEnv ] {
+        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" editorProjectDir (publishDir </> "client")
+    }
+
 
 let test =
     BuildTask.create "Test" [] {

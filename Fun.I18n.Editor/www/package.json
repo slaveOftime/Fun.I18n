@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "node-polyglot": "2.4.0",
+    "recoil": "0.2.0"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "4.0.2",
+    "autoprefixer": "10.2.5",
+    "postcss-nested": "4.2.3",
+    "parcel": "2.0.0-nightly.520",
+    "postcss": "8.2.7",
+    "remotedev": "0.2.9",
+    "tailwindcss": "2.0.3"
+  }
+}

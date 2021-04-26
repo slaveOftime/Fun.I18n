@@ -11,6 +11,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Provider.FableDemo
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Provider.Fable", "Fun.I18n.Provider.Fable\Fun.I18n.Provider.Fable.fsproj", "{DFD764A9-BDE4-4C2A-AC91-23A01C1B774E}"
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Editor", "Fun.I18n.Editor\Fun.I18n.Editor.fsproj", "{7FCC0339-E22B-4B91-858B-0974FE2A720B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{DFD764A9-BDE4-4C2A-AC91-23A01C1B774E}.Release|x64.Build.0 = Release|Any CPU
 		{DFD764A9-BDE4-4C2A-AC91-23A01C1B774E}.Release|x86.ActiveCfg = Release|Any CPU
 		{DFD764A9-BDE4-4C2A-AC91-23A01C1B774E}.Release|x86.Build.0 = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|x64.Build.0 = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Debug|x86.Build.0 = Debug|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x64.ActiveCfg = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x64.Build.0 = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x86.ActiveCfg = Release|Any CPU
+		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
