@@ -42,3 +42,28 @@ let i18n =
         key "App.I18n"
         def (Fun.I18n.Provider.Fable.Utils.createI18n I18N en)
     }
+
+
+let files =
+    atom {
+        key "App.Files"
+        def (List<Browser.Types.File>.Empty)
+    }
+
+let parsedFiles =
+    atom {
+        key "App.ParseFiles"
+        def Map.empty<string, Map<string, string>>
+    }
+
+let selectedFile =
+    atom {
+        key "App.SelectedFile"
+        def Option<Browser.Types.File>.None
+    }
+
+let selectedPath =
+    atom {
+        key "App.SelectedPath"
+        def Option<string>.None
+    }
