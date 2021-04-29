@@ -11,16 +11,21 @@ open type prop
 [<ReactComponent>]
 let I18nTranslator () =
     let i18n = Recoil.useValue Stores.i18n
-    let defaultFileName = Recoil.useValue Stores.defaultFileName
-    let selectedPath = Recoil.useValue Stores.selectedPath
+    let defaultLocaleFile = Recoil.useValue Stores.defaultLocaleFile
+    let selectedFieldPath = Recoil.useValue Stores.selectedFieldPath
     let parsedFiles = Recoil.useValue Stores.parsedFiles
 
     div [
-        key (string selectedPath)
+        key (string selectedFieldPath)
         classes [ Tw.``p-4``; Tw.``overflow-y-auto`` ]
         children [
-            match selectedPath, defaultFileName with
+            match selectedFieldPath, defaultLocaleFile with
             | Some path, Some defaultFileName ->
+                yield div [
+                    text path
+                    classes [ Tw.``font-semibold``; Tw.``p-2``; Tw.``bg-blue-100``; Tw.rounded ]
+                ]
+
                 yield I18nField
                     {| defaultFilePath = defaultFileName
                        filePath = defaultFileName
@@ -49,4 +54,3 @@ let I18nTranslator () =
                 ]
         ]
     ]
-

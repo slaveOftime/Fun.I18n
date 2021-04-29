@@ -14,11 +14,12 @@ let App () =
     React.useEffectOnce (fun () ->
         Browser.Dom.document.title <- i18n.App.Title)
 
+
     div [
         classes [ Tw.flex; Tw.``flex-row``; Tw.``h-screen`` ]
         children [
             div [
-                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-40``; Tw.``shadow-md`` ]
+                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-64``; Tw.``shadow-md`` ]
                 children [
                     div [
                         text i18n.App.Title
@@ -28,7 +29,7 @@ let App () =
                         classes [ Tw.``flex-1``; Tw.``overflow-auto`` ]
                         children [ I18nFileTree () ]
                     ]
-                    LangguageSwitcher ()
+                    LanguageSwitcher ()
                 ]
             ]
             div [

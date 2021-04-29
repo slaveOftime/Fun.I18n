@@ -3,7 +3,8 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "node-polyglot": "2.4.0",
-    "recoil": "0.2.0"
+    "recoil": "0.2.0",
+    "file-saver": "2.0.5"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "4.0.2",

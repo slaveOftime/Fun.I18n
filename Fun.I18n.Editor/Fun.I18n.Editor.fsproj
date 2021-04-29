@@ -4,11 +4,11 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="App.i18n.json" />
+		<Content Include="App.en.i18n.json" />
 		<Compile Include="Stores.fs" />
 		<Compile Include="Hooks.fs" />
 		<Compile Include="Controls.fs" />
-		<Compile Include="LangguageSwitcher.fs" />
+		<Compile Include="LanguageSwitcher.fs" />
 		<Compile Include="I18nFileTree.fs" />
 		<Compile Include="I18nField.fs" />
 		<Compile Include="I18nTranslator.fs" />

@@ -3,7 +3,7 @@
 open Feliz.Recoil
 
 
-let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/App.i18n.json"
+let [<Literal>] TestJsonFilePath = __SOURCE_DIRECTORY__ + "/App.en.i18n.json"
 
 type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, true>
 
@@ -66,13 +66,13 @@ let parsedFiles =
         def Map.empty<string, Map<string, string>>
     }
 
-let defaultFileName =
+let defaultLocaleFile =
     atom {
         key "App.DefaultFileName"
         def Option<string>.None
     }
 
-let selectedPath =
+let selectedFieldPath =
     atom {
         key "App.SelectedPath"
         def Option<string>.None
