@@ -7,6 +7,7 @@
 #load "./scripts/WebClient.fsx"
 
 
+open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.DotNet
 open Fake.JavaScript
@@ -16,6 +17,7 @@ let editorProjectDir = "Fun.I18n.Editor"
 let demoProjectDir = "Fun.I18n.Provider.FableDemo"
 let testProjectDir = "Fun.I18n.Provider.Tests"
 let publishDir = __SOURCE_DIRECTORY__ </> "publish"
+let githubDocs = __SOURCE_DIRECTORY__ </> "docs"
 
 
 fsi.CommandLineArgs
@@ -50,7 +52,8 @@ let startEditorDev =
 
 let bundleEditor =
     BuildTask.create "BundleEditor" [ checkEnv ] {
-        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" editorProjectDir (publishDir </> "client")
+        Shell.cleanDir githubDocs
+        WebClient.bundle "--exclude Fun.I18n.Provider.fsproj" editorProjectDir githubDocs
     }
 
 
