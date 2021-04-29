@@ -10,45 +10,30 @@ open type prop
 [<ReactComponent>]
 let App () =
     let i18n = Recoil.useValue Stores.i18n
-    let currentLocale = Recoil.useValue Stores.locale
-    let localeSwitch = Hooks.useLocaleSwitch ()
+
+    React.useEffectOnce (fun () ->
+        Browser.Dom.document.title <- i18n.App.Title)
 
     div [
         classes [ Tw.flex; Tw.``flex-row``; Tw.``h-screen`` ]
         children [
             div [
-                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-40``; Tw.``bg-gray-100`` ]
+                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-40``; Tw.``shadow-md`` ]
                 children [
                     div [
-                        classes [ Tw.``flex-1`` ]
-                        children [ I18nFileTree () ]
+                        text i18n.App.Title
+                        classes [ Tw.``text-center``; Tw.``bg-blue-100``; Tw.``text-blue-500``; Tw.``font-bold``; Tw.``p-4`` ]
                     ]
                     div [
-                        classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``m-2`` ]
-                        children [
-                            button [
-                                text "中文"
-                                onClick (fun _ -> localeSwitch (nameof Stores.zhcn))
-                                classes [ 
-                                    Tw.rounded; Tw.``bg-green-100``; Tw.``hover:bg-green-200``; Tw.``py-1``; Tw.``text-sm``; Tw.``mb-2``
-                                    if currentLocale = nameof Stores.zhcn then Tw.``bg-green-500``; Tw.``text-white``
-                                ]
-                            ]
-                            button [
-                                text "English"
-                                onClick (fun _ -> localeSwitch (nameof Stores.en))
-                                classes [ 
-                                    Tw.rounded; Tw.``bg-green-100``; Tw.``hover:bg-green-200``; Tw.``py-1``; Tw.``text-sm``
-                                    if currentLocale = nameof Stores.en then Tw.``bg-green-500``; Tw.``text-white``
-                                ]
-                            ]
-                        ]
+                        classes [ Tw.``flex-1``; Tw.``overflow-auto`` ]
+                        children [ I18nFileTree () ]
                     ]
+                    LangguageSwitcher ()
                 ]
             ]
             div [
-                classes [ Tw.``flex-1`` ]
-                children [ I18nValueEditor () ]
+                classes [ Tw.``flex-1``; Tw.``overflow-y-auto`` ]
+                children [ I18nTranslator () ]
             ]
         ]
     ]

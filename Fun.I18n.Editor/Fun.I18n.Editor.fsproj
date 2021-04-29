@@ -8,8 +8,10 @@
 		<Compile Include="Stores.fs" />
 		<Compile Include="Hooks.fs" />
 		<Compile Include="Controls.fs" />
+		<Compile Include="LangguageSwitcher.fs" />
 		<Compile Include="I18nFileTree.fs" />
-		<Compile Include="I18nValueEditor.fs" />
+		<Compile Include="I18nField.fs" />
+		<Compile Include="I18nTranslator.fs" />
 		<Compile Include="App.fs" />
 	</ItemGroup>
 	<ItemGroup>

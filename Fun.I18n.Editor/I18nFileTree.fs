@@ -15,35 +15,42 @@ open type prop
 [<ReactComponent>]
 let I18nFileTree () =
     let i18n = Recoil.useValue Stores.i18n
+
     let files, setFiles = Recoil.useState Stores.files
-    let selectedFile, setSelectedFile = Recoil.useState Stores.selectedFile
-    let defaultLocale, setDefaltLocale = React.useState "en"
+    let defaultFileName, setDefaultFileName = Recoil.useState Stores.defaultFileName
     let selectedPath, setSelectedPath = Recoil.useState Stores.selectedPath
     let parsedFiles, setParseFiles = Recoil.useState Stores.parsedFiles
     let i18nJson, setI18nJson = React.useState None
+    let parsedFilesRef = React.useRef parsedFiles
 
-    let setI18nFiles (files: Browser.Types.File list) =
-        let files = files |> List.filter (fun file -> file.name.EndsWith(".i18n.json", StringComparison.OrdinalIgnoreCase))
-        files |> setFiles
-        
-        let mutable maps = parsedFiles
-        files
-        |> List.iteri (fun i file ->
+    let setI18nFiles = React.useCallbackRef (fun (files: Browser.Types.File list) ->
+        setFiles files
+        setDefaultFileName None
+        setSelectedPath None
+        setParseFiles Map.empty
+        setI18nJson None
+        parsedFilesRef.current <- Map.empty
+
+        for file in files do
             let fileReader = Browser.Dom.FileReader.Create()
             fileReader.onload <- fun e ->
-                e.target?result |> Utils.parseToI18nMap |> fun x -> Map.add file.name x maps |> fun x -> maps <- x
-                if i = files.Length - 1 then
-                    setParseFiles maps
+                let map = e.target?result |> Utils.parseToI18nMap
+                parsedFilesRef.current <- parsedFilesRef.current |> Map.add file.name map
+                setParseFiles parsedFilesRef.current
             fileReader.readAsText(file))
 
-        match files with
-        | file::_ ->
+
+    let setDefaultLocaleFile (fileName: string) =
+        let file = files |> List.tryFind (fun x -> x.name = fileName)
+        match file with
+        | None -> ()
+        | Some file ->
             let fileReader = Browser.Dom.FileReader.Create()
             fileReader.onload <- fun e ->
                 e.target?result |> SimpleJson.parse |> Some |> setI18nJson
-            fileReader.readAsText(file) 
-        | _ ->
-            ()
+                file.name |> Some |> setDefaultFileName
+            fileReader.readAsText(file)
+
 
     let rec renderI18nJson (path: string) (name: string) (json: Json) =
         let (</>) str1 str2 =
@@ -56,10 +63,10 @@ let I18nFileTree () =
                 children [
                     div [
                         text name
-                        onClick (fun e -> e.stopPropagation(); path </> name |> Some |> setSelectedPath)
+                        classes [ Tw.``text-gray-600``; Tw.``font-semibold``; Tw.``text-sm`` ]
                     ]
                     div [
-                        classes [ Tw.``ml-2`` ]
+                        classes [ ]
                         children [
                             for name', json in Map.toList map do
                                 yield renderI18nJson (path </> name) name' json
@@ -71,35 +78,52 @@ let I18nFileTree () =
             div [
                 text name
                 onClick (fun e -> e.stopPropagation(); path </> name |> Some |> setSelectedPath)
+                classes [
+                    Tw.``ml-4``; Tw.``text-sm``; Tw.``my-1``
+                    Tw.``cursor-pointer``; Tw.``px-2``; Tw.``py-1``; Tw.rounded
+                    if selectedPath = Some (path </> name) then Tw.``bg-green-600``; Tw.``text-gray-100``; Tw.``shadow-lg``
+                    else Tw.``text-gray-600``; Tw.``hover:bg-blue-100``; Tw.``hover:text-gray-800``
+                ]
             ]
 
     div [
-        classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch`` ]
+        classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``p-2``; Tw.``h-full`` ]
         children [
+            FileSelector 
+                (i18n.App.Commands.SelectFiles
+                ,".json"
+                ,setI18nFiles)
+
             div [
+                text i18n.App.Commands.SelectDefaultLocaleFile
+                classes [ Tw.``text-gray-400``; Tw.``text-xs``; Tw.``mb-1`` ]
+            ]
+            select [
+                onChange setDefaultLocaleFile
+                valueOrDefault (Option.defaultValue "" defaultFileName)
+                classes [ Tw.``outline-none``; Tw.``hover:shadow-md``; Tw.``text-yellow-500``; Tw.``bg-yellow-100``; Tw.``p-1``; Tw.rounded ]
                 children [
-                    input [
-                        type' "file"
-                        multiple true
-                        custom ("webkitdirectory", "")
-                        //classes [ Tw.hidden ]
-                        onChange setI18nFiles
-                        accept ".json"
-                    ]
+                    for file in files do
+                        option [
+                            text file.name
+                            value file.name
+                            classes [ Tw.``appearance-none``; Tw.``p-1``; Tw.``text-gray-600``; Tw.``hover:bg-blue-100`` ]
+                        ]
                 ]
             ]
-            div [
-                text i18n.App.Commands.SelectFilesMsg
-                classes [ Tw.``text-xs``; Tw.``text-gray-300``; Tw.``bg-yellow-100``; Tw.``text-center`` ]
-            ]
-            div [
-                classes [ Tw.``flex-1``; Tw.``overflow-auto`` ]
-                children [
-                    div (string selectedPath)
-                    match i18nJson with
-                    | None -> ()
-                    | Some json -> renderI18nJson "" "" json
+
+            match i18nJson with
+            | None -> ()
+            | Some json ->
+                div [
+                    classes [ Tw.``flex-1``; Tw.``overflow-auto``; Tw.``mt-2``; Tw.``p-1``; Tw.rounded; Tw.``bg-gray-100`` ]
+                    children [ renderI18nJson "" "" json ]
                 ]
+
+            button [
+                text i18n.App.Commands.Export
+                disabled parsedFilesRef.current.IsEmpty
+                classes [ Tw.rounded; Tw.``mt-4``; Tw.``text-center``; Tw.``p-1``; Tw.``hover:bg-blue-100``; Tw.``bg-green-100`` ]
             ]
         ]
     ]

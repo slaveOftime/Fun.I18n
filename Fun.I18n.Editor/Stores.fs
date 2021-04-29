@@ -10,24 +10,34 @@ type I18N = Fun.I18n.Provider.I18nProvider<TestJsonFilePath, true>
 
 let en = 
     """
-    {
-      "App": {
-        "Title": "This is the coolest app",
-        "FormatAll": "String: %{strVar}; Int: %{intVar}; Float: %{floatVar}; Any: %{anyVar}",
-        "GotErrors": "You got %{smart_count} error |||| You got %{smart_count} errors"
-      }
-    }
+{
+  "App": {
+    "Title": "I18n Translator",
+    "Commands": {
+      "SelectFiles": "Select files",
+      "SelectDefaultLocaleFile": "Select default locale file",
+      "Export": "Export"
+    },
+    "NoFileSelectedForEdit": "No file selected for edit",
+    "NoPathSelectedForEdit": "No field path selected for edit"
+  }
+}
     """
 
 let zhcn = 
     """
-    {
-      "App": {
-        "Title": "有意思✌",
-        "FormatAll": "字符串: %{strVar}; 整型: %{intVar}; 浮点型: %{floatVar}; 任意: %{anyVar}",
-        "GotErrors": "有 %{smart_count} 个错误"
-      }
-    }
+{
+  "App": {
+    "Title": "I18n 翻译器",
+    "Commands": {
+      "SelectFiles": "选择 i18n json 文件",
+      "SelectDefaultLocaleFile": "选择默认语言文件",
+      "Export": "导出"
+    },
+    "NoFileSelectedForEdit": "没有任何文件可供编辑",
+    "NoPathSelectedForEdit": "没有选择任何字段以供翻译"
+  }
+}
     """
 
 
@@ -56,10 +66,10 @@ let parsedFiles =
         def Map.empty<string, Map<string, string>>
     }
 
-let selectedFile =
+let defaultFileName =
     atom {
-        key "App.SelectedFile"
-        def Option<Browser.Types.File>.None
+        key "App.DefaultFileName"
+        def Option<string>.None
     }
 
 let selectedPath =

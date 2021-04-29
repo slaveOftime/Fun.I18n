@@ -3,8 +3,10 @@
     "Title": "I18n json file editor",
     "Commands": {
       "SelectFiles": "Select files",
-      "SelectFilesMsg": "You can select a folder which contains extension like *.i18n.json.\r\n Then the editor will import all of them and list them for edit, after edit is finished then you can export to zip file which will contain all the files with same folder structure"
+      "SelectDefaultLocaleFile": "Select default locale file",
+      "Export": "Export"
     },
-    "NoFileSelectedForEdit": "No file selected for edit"
+    "NoFileSelectedForEdit": "No file selected for edit",
+    "NoPathSelectedForEdit": "No field path selected for edit"
   }
 }
