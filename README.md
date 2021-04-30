@@ -6,6 +6,10 @@ The difference is that I try to support dotnet and fable at the same time and re
 
 I also use this project to try fsharp typeprovider and finally learned something.
 
+
+> [Online i18n json editor is hosted on github now](https://albertwoo.github.io/Fun.I18n/)
+
+
 ## How to use
 
 ```
@@ -47,4 +51,17 @@ i18n.App.FormatAll("cool string", 123, 1234., "any")
 i18n.Translate "App:Title" // This is the coolest app
 // Or
 i18n.App.Translate "Title" // This is the coolest app
+
+i18n.App.TryTranslate "NotDefinedKey" // None
+```
+
+You can also create new i18n based on some default i18n like:
+
+```fsharp
+
+#if !FABLE_COMPILER
+let newI18n = Fun.I18n.Provider.Utils.createI18nWith i18n newI18nJson
+#else
+let newI18n = Fun.I18n.Provider.Fable.Utils.createI18nWith i18n newI18nJson
+#endif
 ```
