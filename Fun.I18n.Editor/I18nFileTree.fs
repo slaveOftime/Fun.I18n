@@ -21,29 +21,14 @@ let I18nFileTree () =
     let selectedFieldPath, setSelectedFieldPath = Recoil.useState Stores.selectedFieldPath
     let parsedFiles, setParseFiles = Recoil.useState Stores.parsedFiles
     let i18nJson, setI18nJson = React.useState None
+    let filesRef = React.useRef files
     let parsedFilesRef = React.useRef parsedFiles
 
     let export = Hooks.useExportParsedFiles ()
 
-    let setI18nFiles = React.useCallbackRef (fun (files: Browser.Types.File list) ->
-        setFiles files
-        setdefaultLocaleFile None
-        setSelectedFieldPath None
-        setParseFiles Map.empty
-        setI18nJson None
-        parsedFilesRef.current <- Map.empty
-
-        for file in files do
-            let fileReader = Browser.Dom.FileReader.Create()
-            fileReader.onload <- fun e ->
-                let map = e.target?result |> Utils.parseToI18nMap
-                parsedFilesRef.current <- parsedFilesRef.current |> Map.add file.name map
-                setParseFiles parsedFilesRef.current
-            fileReader.readAsText(file))
-
 
     let setDefaultLocaleFile (fileName: string) =
-        let file = files |> List.tryFind (fun x -> x.name = fileName)
+        let file = filesRef.current |> List.tryFind (fun x -> x.name = fileName)
         match file with
         | None -> ()
         | Some file ->
@@ -52,6 +37,34 @@ let I18nFileTree () =
                 e.target?result |> SimpleJson.parse |> Some |> setI18nJson
                 file.name |> Some |> setdefaultLocaleFile
             fileReader.readAsText(file)
+
+
+    let addParsedFile (file: Browser.Types.File) =
+        filesRef.current <- filesRef.current |> List.append [ file ] |> List.distinctBy (fun x -> x.name) |> List.sortBy (fun x -> x.name)
+        setFiles filesRef.current
+
+        match defaultLocaleFile with
+        | Some fileName when fileName = file.name -> setDefaultLocaleFile fileName
+        | _ -> ()
+
+        let fileReader = Browser.Dom.FileReader.Create()
+        fileReader.onload <- fun e ->
+            let parsedFile = e.target?result |> Utils.parseToI18nMap
+            parsedFilesRef.current <- parsedFilesRef.current |> Map.add file.name parsedFile
+            setParseFiles parsedFilesRef.current
+        fileReader.readAsText(file)
+
+
+    let setI18nFiles (files: Browser.Types.File list) =
+        setFiles files
+        setdefaultLocaleFile None
+        setSelectedFieldPath None
+        setParseFiles Map.empty
+        setI18nJson None
+        parsedFilesRef.current <- Map.empty
+        filesRef.current <- []
+        
+        files |> List.iter addParsedFile
 
 
     let rec renderI18nJson (path: string) (name: string) (json: Json) =
@@ -65,7 +78,7 @@ let I18nFileTree () =
                 children [
                     div [
                         text name
-                        classes [ Tw.``text-gray-600``; Tw.``font-semibold``; Tw.``text-sm`` ]
+                        classes [ Tw.``text-gray-600``; Tw.``font-semibold``; Tw.``text-sm``; Tw.``px-2`` ]
                     ]
                     div [
                         classes [ 
@@ -94,6 +107,10 @@ let I18nFileTree () =
         classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``p-2``; Tw.``h-full`` ]
         children [
             FileSelector (i18n.App.Commands.SelectFiles, ".json", setI18nFiles)
+            spaceV 2
+            FileSelector (i18n.App.Commands.AddFile, ".json", List.iter addParsedFile)
+            
+            spaceV 4
 
             div [
                 text i18n.App.Commands.SelectDefaultLocaleFile
@@ -127,7 +144,7 @@ let I18nFileTree () =
                 disabled parsedFilesRef.current.IsEmpty
                 onClick (fun _ -> export ())
                 classes [ 
-                    Tw.rounded; Tw.``mt-4``; Tw.``text-center``; Tw.``p-1``; Tw.``hover:bg-blue-100``; Tw.``bg-blue-100``; Tw.``text-sm``; Tw.shadow
+                    Tw.rounded; Tw.``mt-4``; Tw.``text-center``; Tw.``p-1``; Tw.``hover:shadow-lg``; Tw.``bg-gradient-to-r``; Tw.``from-yellow-100``; Tw.``to-green-100``; Tw.``text-sm``; Tw.shadow
                     if parsedFilesRef.current.IsEmpty then Tw.``opacity-40``; Tw.``cursor-not-allowed``
                 ]
             ]

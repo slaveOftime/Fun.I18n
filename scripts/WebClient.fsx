@@ -19,7 +19,7 @@ let watchFile fn file =
 let private runFable fableArgs projectDir isDebug isWatch =
     let mode = match isWatch with false -> "" | true -> "watch"
     let config = if isDebug then " --define DEBUG" else ""
-    DotNet.exec (fun x -> { x with WorkingDirectory = projectDir }) "fable" $"{mode} . --outDir ./www/fablejs{config} %s{fableArgs}" |> ignore
+    DotNet.exec (fun x -> { x with WorkingDirectory = projectDir }) "fable" $"{mode} . --outDir \"./www/fablejs{config}\" %s{fableArgs}" |> ignore
 
 let private cleanGeneratedJs projectDir = Shell.cleanDir (projectDir </> "www/fablejs")
 
@@ -61,4 +61,4 @@ let bundle fableArgs projectDir outDir =
     buildTailwindCss projectDir
     runFable fableArgs projectDir false false
     Shell.cleanDir outDir
-    Yarn.exec $"parcel build index.html --dist-dir {outDir} --public-url ./ --no-source-maps --no-cache" (fun x -> { x with WorkingDirectory = projectDir </> "www" })
+    Yarn.exec $"parcel build index.html --dist-dir \"{outDir}\" --public-url ./ --no-source-maps --no-cache" (fun x -> { x with WorkingDirectory = projectDir </> "www" })

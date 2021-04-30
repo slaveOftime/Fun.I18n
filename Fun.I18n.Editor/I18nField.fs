@@ -35,7 +35,7 @@ let I18nField (props: {| defaultFilePath: string; filePath: string; path: string
                         parsedFiles |> Map.add props.filePath map |> setParsedFiles)
                     classes [
                         Tw.rounded; Tw.``outline-none``; Tw.rounded; Tw.``px-2``; Tw.``py-1``; Tw.``mt-1``; Tw.``w-full``; Tw.``cursor-pointer``
-                        Tw.``hover:bg-blue-100``; Tw.``focus:shadow-lg``; Tw.``focus:border-blue-400``; Tw.``border-b-2``
+                        Tw.``hover:bg-blue-100``; Tw.``focus:shadow-lg``; Tw.``focus:border-green-600``; Tw.``border-2``; Tw.``border-transparent``
                     ]
                     autoFocus (if props.defaultFilePath = props.filePath then true else false)
                 ]

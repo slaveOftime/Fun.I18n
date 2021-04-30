@@ -23,7 +23,7 @@ let I18nTranslator () =
             | Some path, Some defaultFileName ->
                 yield div [
                     text path
-                    classes [ Tw.``font-semibold``; Tw.``p-2``; Tw.``bg-blue-100``; Tw.rounded ]
+                    classes [ Tw.``font-semibold``; Tw.``p-2``; Tw.``bg-green-600``; Tw.``text-white``; Tw.rounded ]
                 ]
 
                 yield I18nField

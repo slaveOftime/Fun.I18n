@@ -19,11 +19,11 @@ let App () =
         classes [ Tw.flex; Tw.``flex-row``; Tw.``h-screen`` ]
         children [
             div [
-                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-64``; Tw.``shadow-md`` ]
+                classes [ Tw.flex; Tw.``flex-col``; Tw.``items-stretch``; Tw.``w-64``; Tw.``shadow-lg`` ]
                 children [
                     div [
                         text i18n.App.Title
-                        classes [ Tw.``text-center``; Tw.``bg-blue-100``; Tw.``text-blue-500``; Tw.``font-bold``; Tw.``p-4`` ]
+                        classes [ Tw.``text-center``; Tw.``text-blue-500``; Tw.``font-bold``; Tw.``p-4``; Tw.uppercase; Tw.``bg-gradient-to-r``; Tw.``from-blue-100``; Tw.``to-green-100`` ]
                     ]
                     div [
                         classes [ Tw.``flex-1``; Tw.``overflow-auto`` ]

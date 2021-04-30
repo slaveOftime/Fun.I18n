@@ -4,7 +4,9 @@ open System
 open Feliz
 open Feliz.Recoil
 open Fable.Core
+open Fable.Core.JsInterop
 open Fable.SimpleJson
+open Fun.I18n.Provider.Fable
 open Stores
 
 
@@ -17,10 +19,22 @@ let useLocaleSwitch () =
             setLocale loc
             match loc with
             | nameof en -> setI18n (Fun.I18n.Provider.Fable.Utils.createI18n I18N en)
-            | nameof zhcn -> setI18n (Fun.I18n.Provider.Fable.Utils.createI18n I18N zhcn)
+            | nameof zh_CN -> setI18n (Fun.I18n.Provider.Fable.Utils.createI18n I18N zh_CN)
             | _ -> ()
 
     switch
+
+
+let useAddParsedFile () =
+    let add (parsedFilesRef: IRefValue<Map<string, Map<string, string>>>) (file: Browser.Types.File) =
+        let fileReader = Browser.Dom.FileReader.Create()
+        fileReader.onload <- fun e ->
+            let parsedFile = e.target?result |> Utils.parseToI18nMap
+            parsedFilesRef.current <- parsedFilesRef.current |> Map.add file.name parsedFile
+        fileReader.readAsText(file)
+
+    add
+
 
 
 [<Import("saveAs", from="file-saver")>]
@@ -28,6 +42,10 @@ let private fileSaverSaveAs data fileName: unit = jsNative
 
 [<Emit("new Blob([$1], {type: $0})")>]
 let private createBlobByString (ty: string) (str: string): Browser.Types.Blob = jsNative
+
+[<Emit("JSON.stringify($1, null, $0)")>]
+let private toJsonString (space: string) (data: obj): string = jsNative
+
 
 let useExportParsedFiles () =
     let parsedFiles = Recoil.useValue Stores.parsedFiles
@@ -69,7 +87,8 @@ let useExportParsedFiles () =
             |> List.sortBy fst
             |> createJson "" 
             |> Json.JObject
-            |> SimpleJson.toString
+            |> SimpleJson.toPlainObject
+            |> toJsonString "  "
             |> createBlobByString ".json"
             |> fun x -> fileSaverSaveAs x fileName)
 

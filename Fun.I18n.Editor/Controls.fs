@@ -13,12 +13,24 @@ type Tw = CssClasses<TailwindCssPath, Naming.Verbatim>
 type Ic = CssClasses<IconmoonCssPath, Naming.Verbatim>
 
 
+let spaceV x =
+    div [
+        classes [
+            match x with
+            | 1 -> Tw.``h-1``
+            | 2 -> Tw.``h-2``
+            | 3 -> Tw.``h-3``
+            | _ -> Tw.``h-4``
+        ]
+    ]
+
+
 [<ReactComponent>]
 let FileSelector (label: string, extension: string, onFilesSelected: Browser.Types.File list -> unit) =
     div [
         classes [ 
-            Tw.relative; Tw.``py-2``; Tw.``m-4``; Tw.rounded; Tw.``bg-white``; Tw.``shadow-md``; Tw.``cursor-pointer``
-            Tw.``hover:shadow-lg``; Tw.``hover:bg-blue-100``
+            Tw.relative; Tw.``py-2``; Tw.rounded; Tw.``bg-white``; Tw.``shadow-md``; Tw.``cursor-pointer``
+            Tw.``hover:shadow-lg``; Tw.``hover:bg-blue-100``; Tw.``text-sm``
         ]
         children [
             div [

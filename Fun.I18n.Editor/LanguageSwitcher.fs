@@ -17,17 +17,17 @@ let LanguageSwitcher () =
         children [
             button [
                 text "中文"
-                onClick (fun _ -> localeSwitch (nameof Stores.zhcn))
+                onClick (fun _ -> localeSwitch (nameof Stores.zh_CN))
                 classes [ 
-                    Tw.rounded; Tw.``bg-gray-100``; Tw.``hover:bg-blue-100``; Tw.``hover:text-gray-600``; Tw.``py-1``; Tw.``text-xs``; Tw.``mr-1``; Tw.``flex-1``
-                    if currentLocale = nameof Stores.zhcn then Tw.``bg-gray-200``; Tw.``text-white``
+                    Tw.``rounded-l-full``; Tw.``bg-gray-100``; Tw.``hover:bg-blue-100``; Tw.``hover:text-gray-600``; Tw.``py-1``; Tw.``text-xs``; Tw.``flex-1``
+                    if currentLocale = nameof Stores.zh_CN then Tw.``bg-gray-200``; Tw.``text-white``
                 ]
             ]
             button [
                 text "English"
                 onClick (fun _ -> localeSwitch (nameof Stores.en))
                 classes [ 
-                    Tw.rounded; Tw.``bg-gray-100``; Tw.``hover:bg-blue-100``; Tw.``hover:text-gray-600``; Tw.``py-1``; Tw.``text-xs``; Tw.``flex-1``
+                    Tw.``rounded-r-full``; Tw.``bg-gray-100``; Tw.``hover:bg-blue-100``; Tw.``hover:text-gray-600``; Tw.``py-1``; Tw.``text-xs``; Tw.``flex-1``
                     if currentLocale = nameof Stores.en then Tw.``bg-gray-400``; Tw.``text-white``
                 ]
             ]
