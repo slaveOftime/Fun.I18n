@@ -22,6 +22,9 @@ module internal Generator =
 
     [<Fable.Core.Emit("$0.$i18n.translate($0, $1, $2)")>]
     let translate (bundle: Map<string, string>) (path: string) (key: string) = obj()
+
+    [<Fable.Core.Emit("$0.$i18n.tryTranslate($0, $1, $2)")>]
+    let tryTranslate (bundle: Map<string, string>) (path: string) (key: string) = obj()
     
     [<Fable.Core.Emit("$1.$i18n.translateWith($0, $1, $2, $3, $4)")>]
     let translateWith (forSmartCount: bool) (bundle: Map<string, string>) (path: string) (fieldDefs: string list) (args: obj list) = obj()
@@ -41,6 +44,21 @@ module internal Generator =
                         bundle
                         |> Map.tryFind path
                         |> Option.defaultValue path
+                    @@>)
+
+    let tryTranslateMethod forFable (path: string) =
+        Method
+            ("TryTranslate", [ "key", ErasedType.String ], ErasedType.Option ErasedType.String, false
+            ,fun args ->
+                if forFable then
+                    <@@ tryTranslate ((%%args.[0]: obj) :?> Map<string, string>) path (%%args.[1]: string) @@>
+                else
+                    <@@
+                        let bundle = (%%args.[0]: obj) :?> Map<string, string>
+                        let key = %%args.[1]: string
+                        let path = if path.Length > 0 then path + ":" + key else key
+                        bundle
+                        |> Map.tryFind path
                     @@>)
 
     
@@ -181,7 +199,9 @@ module internal Generator =
                     [
                         yield! makeMember forFable fullPath memb
                         match memb with
-                        | _, JsonParser.Object _ -> translateMethod forFable fullPath
+                        | _, JsonParser.Object _ -> 
+                            translateMethod forFable fullPath
+                            tryTranslateMethod forFable fullPath
                         | _ -> ()
                     ])
             let nestedType = makeCustomType(name, members)
@@ -196,6 +216,7 @@ module internal Generator =
             makeRootType(asm, ns, typeName, [
                 yield! basicMembers |> List.collect (makeMember forFable "")
                 translateMethod forFable ""
+                tryTranslateMethod forFable ""
                 Constructor
                     ([ "jsonString", String ]
                     ,fun args -> 

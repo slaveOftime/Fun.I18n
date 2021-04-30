@@ -55,6 +55,31 @@ let tests =
             Expect.equal (i18n.App.Save) "App:Save" ""
             Expect.equal (i18n.Translate "App:Save") "App:Save" ""
             Expect.equal (i18n.App.Translate "Save") "App:Save" ""
+
+        testCase "Should return none for not failed tryTranslate" <| fun () ->
+            Expect.equal (i18n.TryTranslate "App:Save") None ""
+            Expect.equal (i18n.App.TryTranslate "Save") None ""
+
+        testCase "Should override translation correctly" <| fun () ->
+            let overrideJson =
+                """
+                {
+                  "App": {
+                    "Title": "Overrided"
+                  }
+                }
+                """
+
+            #if !FABLE_COMPILER
+            let i18n = Utils.createI18nWith i18n overrideJson
+            #else
+            let i18n = Fable.Utils.createI18nWith i18n overrideJson
+            #endif
+
+            Expect.equal (i18n.App.Title) "Overrided" ""
+            Expect.equal (i18n.App.Errors.GotErrors 1) "You got 1 error" ""
+            Expect.equal (i18n.Complex.FormatAll("cool string", 123, 1234.)) "String: cool string; Int: 123; Float: 1234" ""
+            Expect.equal (i18n.App.Translate "Save") "App:Save" ""
     ]
 
 
