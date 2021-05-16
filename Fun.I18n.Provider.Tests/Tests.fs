@@ -50,6 +50,7 @@ let tests =
             Expect.equal (i18n.Translate("App:Title")) "This is the coolest app" ""
             Expect.equal (i18n.App.Translate("Title")) "This is the coolest app" ""
             Expect.equal (i18n.Translate("App:Errors")) "App:Errors" ""
+            Expect.equal (i18n.App.Errors.Translate("UserNotFound")) "User (%{id}) is not found" ""
 
         testCase "Should return full path for not translated value" <| fun () ->
             Expect.equal (i18n.App.Save) "App:Save" ""

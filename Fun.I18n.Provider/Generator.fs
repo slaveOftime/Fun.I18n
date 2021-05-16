@@ -193,17 +193,12 @@ module internal Generator =
 
         | JsonParser.Array _ -> []
         | JsonParser.Object members ->
-            let members = 
-                members 
-                |> List.collect (fun memb ->
-                    [
-                        yield! makeMember forFable fullPath memb
-                        match memb with
-                        | _, JsonParser.Object _ -> 
-                            translateMethod forFable fullPath
-                            tryTranslateMethod forFable fullPath
-                        | _ -> ()
-                    ])
+            let members =
+                [
+                    yield! members |> List.collect (fun memb -> makeMember forFable fullPath memb)
+                    translateMethod forFable fullPath
+                    tryTranslateMethod forFable fullPath
+                ]
             let nestedType = makeCustomType(name, members)
             [
                 ChildType nestedType
