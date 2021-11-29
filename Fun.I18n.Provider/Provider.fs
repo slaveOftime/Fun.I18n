@@ -3,7 +3,6 @@
 open System.Reflection
 open System.Text.RegularExpressions
 open Microsoft.FSharp.Core.CompilerServices
-open Fable.SimpleHttp
 
 open ProviderImplementation.ProvidedTypes
 
@@ -28,15 +27,23 @@ type TypeProvider (config: TypeProviderConfig) as this =
         match pVals with
         | [| :? string as arg; :? bool as forFable |] ->
             if Regex.IsMatch(arg, "^https?://") then
-                async {
-                    let! (status, res) = Http.get arg
-                    if status <> 200 then
-                        return failwithf "URL %s returned %i status code" arg status
-                    return
-                        match Generator.createProviderTypeDefinition forFable asm ns typeName res with
-                        | Some t -> t
-                        | None -> failwithf "Response from URL %s is not a valid JSON: %s" arg res
-                } |> Async.RunSynchronously
+                let result =
+                    #if !FABLE_COMPILER
+                    let result = (new System.Net.Http.HttpClient()).GetAsync(arg).Result
+                    if not result.IsSuccessStatusCode then
+                        failwithf "URL %s returned %A status code" arg result.StatusCode
+                    result.Content.ReadAsStringAsync().Result
+                    #else
+                    async {
+                        let! (status, res) = Fable.SimpleHttp.Http.get arg
+                        if status <> 200 then
+                            failwithf "URL %s returned %i status code" arg status
+                        return res
+                    } |> Async.RunSynchronously
+                    #endif
+                match Generator.createProviderTypeDefinition forFable asm ns typeName result with
+                | Some t -> t
+                | None -> failwithf "Response from URL %s is not a valid JSON: %s" arg result
 
             else
                 let content =

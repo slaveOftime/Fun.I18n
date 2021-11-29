@@ -13,7 +13,11 @@ I also use this project to try fsharp typeprovider and finally learned something
 ## How to use
 
 ```
+// For dotnet
 dotnet add package Fun.I18n.Provider
+
+// For fable
+dotnet add package Fun.I18n.Provider.Fable
 ```
 
 ```fsharp

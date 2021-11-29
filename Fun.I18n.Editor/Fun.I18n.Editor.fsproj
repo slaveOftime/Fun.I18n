@@ -21,7 +21,7 @@
 		<PackageReference Include="Zanaptak.TypedCssClasses" Version="0.4.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Fun.I18n.Provider\Fun.I18n.Provider.fsproj" />
+	  <ProjectReference Include="..\Fun.I18n.Provider.Fable\Fun.I18n.Provider.Fable.fsproj" />
 	</ItemGroup>
 	
 </Project>

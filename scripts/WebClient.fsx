@@ -18,7 +18,7 @@ let watchFile fn file =
 
 let private runFable fableArgs projectDir isDebug isWatch =
     let mode = match isWatch with false -> "" | true -> "watch"
-    let config = if isDebug then " --define DEBUG" else ""
+    let config = if isDebug then "" else ""
     DotNet.exec (fun x -> { x with WorkingDirectory = projectDir }) "fable" $"{mode} . --outDir \"./www/fablejs{config}\" %s{fableArgs}" |> ignore
 
 let private cleanGeneratedJs projectDir = Shell.cleanDir (projectDir </> "www/fablejs")
