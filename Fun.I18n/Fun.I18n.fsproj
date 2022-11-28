@@ -8,7 +8,8 @@
 
 	<ItemGroup>
 		<Compile Include="Utils.fs" />
-		<Compile Include="I18n.fs" />
+		<Compile Include="CSharp.fs" />
+		<Compile Include="I18nGenerator.fs" />
 	</ItemGroup>
 
 	<ItemGroup>

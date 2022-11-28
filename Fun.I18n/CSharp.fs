@@ -1,11 +1,11 @@
-﻿module Fun.I18n.CSharp.I18n
+﻿module internal Fun.I18n.CSharp
 
 open System.IO
 open System.Text.Json
 open Fun.I18n.Utils
 
 
-let generateSourceCode sourceFile targetDir targetNamespace =
+let generateSourceCode (sourceFile: string) (targetDir: string) (targetNamespace: string) =
 
     let jsonFile = File.ReadAllText sourceFile
     let rootName = Path.GetFileName(sourceFile).Split(".")[0]
@@ -24,13 +24,13 @@ let generateSourceCode sourceFile targetDir targetNamespace =
             if formatHoleRegex.IsMatch(element.GetString()) then
                 [
                     ""
-                    $"{indent deepth}private string _{name};"
+                    $"{indent deepth}private string? _{name};"
                     $"{indent deepth}public string {name}(params object[] objects) => string.Format(_{name} ??= element?.TryGetProperty(\"{name}\")?.GetString() ?? fallbackElement?.TryGetProperty(\"{name}\")?.GetString() ?? \"{name}\", objects);"
                 ]
             else
                 [
                     ""
-                    $"{indent deepth}private string _{name};"
+                    $"{indent deepth}private string? _{name};"
                     $"{indent deepth}public string {name} => _{name} ??= element?.TryGetProperty(\"{name}\")?.GetString() ?? fallbackElement?.TryGetProperty(\"{name}\")?.GetString() ?? \"{name}\";"
                 ]
 
