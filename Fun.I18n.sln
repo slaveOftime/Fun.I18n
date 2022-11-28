@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.6.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Provider", "Fun.I18n.Provider\Fun.I18n.Provider.fsproj", "{54FBBEB0-0B92-49D7-B371-4AA7F222433F}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Provider.Fable", "Fun.I18n.Provider.Fable\Fun.I18n.Provider.Fable.fsproj", "{DFD764A9-BDE4-4C2A-AC91-23A01C1B774E}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n.Editor", "Fun.I18n.Editor\Fun.I18n.Editor.fsproj", "{7FCC0339-E22B-4B91-858B-0974FE2A720B}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Fun.I18n", "Fun.I18n\Fun.I18n.fsproj", "{D00C08C2-D9FE-4F73-9CF5-018B4B985622}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,18 @@ Global
 		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x64.Build.0 = Release|Any CPU
 		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x86.ActiveCfg = Release|Any CPU
 		{7FCC0339-E22B-4B91-858B-0974FE2A720B}.Release|x86.Build.0 = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|x64.Build.0 = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Debug|x86.Build.0 = Debug|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|x64.ActiveCfg = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|x64.Build.0 = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|x86.ActiveCfg = Release|Any CPU
+		{D00C08C2-D9FE-4F73-9CF5-018B4B985622}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

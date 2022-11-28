@@ -1,9 +1,13 @@
 name: Build and publish nuget packages
 
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+    - main
+
+  #release:
+  #  types:
+  #    - published
 
 jobs:
   build:
@@ -24,12 +28,9 @@ jobs:
     - name: Test
       run: dotnet fsi ./build.fsx
 
-    - name: Publish Fun.I18n.Provider.Fable
+    - name: Publish nuget packages
       run: |
         dotnet pack -c Release Fun.I18n.Provider.Fable/Fun.I18n.Provider.Fable.fsproj -o .
-        dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
-
-    - name: Publish Fun.I18n.Provider
-      run: |
         dotnet pack -c Release Fun.I18n.Provider/Fun.I18n.Provider.fsproj -o .
+        dotnet pack -c Release Fun.I18n/Fun.I18n.fsproj -o .
         dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate

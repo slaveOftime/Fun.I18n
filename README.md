@@ -1,3 +1,9 @@
+# Fun.I18n [![Nuget](https://img.shields.io/nuget/v/Fun.I18n)](https://www.nuget.org/packages/Fun.I18n)
+
+Source generator helper library for i18n.  
+Currently you can use it in your cli tool (Fun.Build etc.) to generate csharp source code.
+
+
 # Fun.I18n.Provider [![Nuget](https://img.shields.io/nuget/v/Fun.I18n.Provider)](https://www.nuget.org/packages/Fun.I18n.Provider)
 
 This project provide a simple i18n provider which is based on the [Titaye](https://github.com/Titaye/Fable.PolyglotProvider) and [Fable.JsonProvider](https://github.com/fable-compiler/Fable.JsonProvider).
