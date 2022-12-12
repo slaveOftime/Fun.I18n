@@ -3,12 +3,13 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>0.0.3</Version>
+		<Version>0.0.4</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Include="Utils.fs" />
 		<Compile Include="CSharp.fs" />
+		<Compile Include="FSharp.fs" />
 		<Compile Include="I18nGenerator.fs" />
 	</ItemGroup>
 
